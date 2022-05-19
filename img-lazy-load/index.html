@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>img-lazy-load</title>
+  <style>
+    .img {
+      width: 200px;
+      height: 200px;
+      background-color: gray;
+      margin-bottom: 20px;
+    }
+
+    .pic {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+  <!-- 图片来自网络，侵删。 -->
+    <div class="container">
+      <div class="img">
+        <!-- 注意我们并没有为它引入真实的src -->
+        <img
+          class="pic"
+          alt="加载中"
+          data-src="https://tse1-mm.cn.bing.net/th/id/OIP.8OrEFn_rKe82kqAWFjTuMwHaEo?pid=Api&rs=1"
+        />
+      </div>
+      <div class="img">
+        <img
+          class="pic"
+          alt="加载中"
+          data-src="https://ssl.tzoo-img.com/images/tzoo.94911.0.910013.seoul-nami.jpg?width=1080"
+        />
+      </div>
+      <div class="img">
+        <img
+          class="pic"
+          alt="加载中"
+          data-src="https://tse4-mm.cn.bing.net/th/id/OIP.ZitgAuABnwkrGn4lid2ZmQHaEK?pid=Api&rs=1"
+        />
+      </div>
+      <div class="img">
+        <img
+          class="pic"
+          alt="加载中"
+          data-src="http://pic34.photophoto.cn/20150315/0034034862056002_b.jpg"
+        />
+      </div>
+      <div class="img">
+        <img
+          class="pic"
+          alt="加载中"
+          data-src="http://img.mp.sohu.com/upload/20170724/32d4409f34194b029ed287abf1c99b70_th.png"
+        />
+      </div>
+      <div class="img">
+        <img
+          class="pic"
+          alt="加载中"
+          data-src="https://pic6.wed114.cn/20180829/2018082910075991913520.jpg"
+        />
+      </div>
+      <div class="img">
+        <img
+          class="pic"
+          alt="加载中"
+          data-src="https://tse4-mm.cn.bing.net/th/id/OIP.PZdPKj3sXEX2jLrepx3MUwHaEo?pid=Api&rs=1"
+        />
+      </div>
+      <div class="img">
+        <img
+          class="pic"
+          alt="加载中"
+          data-src="https://pic6.wed114.cn/20180829/2018082910075831439349.jpg"
+        />
+      </div>
+      <div class="img">
+        <img
+          class="pic"
+          alt="加载中"
+          data-src="https://pic6.wed114.cn/20180829/2018082910075468043336.jpg"
+        />
+      </div>
+      <div class="img">
+        <img
+          class="pic"
+          alt="加载中"
+          data-src="https://tse2-mm.cn.bing.net/th/id/OIP.CRYz5Bv4vylsMh83G4CsLgHaFj?pid=Api&rs=1"
+        />
+      </div>
+    </div>
+    <script>
+      const imgs = document.querySelectorAll('img');
+      const viewHeight = window.innerHeight || document.documentElement.clientHeight;
+      let num = 0;
+      function lazyload(){
+        for(let i = num; i < imgs.length; i++){
+          const distance = viewHeight - imgs[i].getBoundingClientRect().top;
+          // 当处在可视范围内时，赋值src属性
+          if(distance >= 0){
+            imgs[i].src = imgs[i].getAttribute('data-src');
+            num = i + 1;
+          }
+        }
+      }
+      // 节流函数
+      function debounce(fn,interval){
+        let timer = null;
+        return function(...args){
+          if(timer) clearTimeout(timer);
+          timer = setTimeout(()=>{
+            fn.call(this,...args);
+          },interval);
+        }
+      }
+
+      // 是的页面初始化是加载首屏图片
+      window.onload = lazyload;
+      // 监听Scroll事件，为了防止频繁调用，使用防抖函数优化一下
+      window.addEventListener("scroll", debounce(lazyload, 600), false);
+    </script>
+</body>
+</html>
