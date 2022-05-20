@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script src="https://unpkg.com/vue@3"></script>
+  <script type="importmap">
+    {
+      "imports": {
+        "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js"
+      }
+    }
+  </script>
+  <div id="app">
+    {{ article}}
+    <div>
+      出现最多的单词：{{ maxWord }}
+    </div>
+    <script type="module">
+      import { createApp, ref, computed } from 'vue';
+      createApp({
+        setup() {
+          const article = ref('Every day of your life, it is important to take the time to “smell the roses” — to appreciate the experiences that lead to happiness. This is part of being truly happy. Happiness is a state of mind. It starts with accepting where you are, knowing where you are going and planning to enjoy every moment along the way. You know how to be happy, and feel that you have enough time or money or love or whatever you need to achieve your goals. And just feeling that you have enough of everything means that you do indeed have enough. You have to choose to be happy, and focus upon being happy, in order to be happy. If you instead focus upon knowing that you will be happy if you achieve something, you will never be happy, as you have not learned to “smell the roses”. The irony is that when you are happy, you are inevitably more productive, and far more likely to achieve what everything-seekers are seeking.');
+          const findMostWord = (article) => {
+            let max = 0;
+            let maxWord = '';
+            let wordCount = {};
+            let words = article.split(' ');
+            words.forEach(word => {
+              if (wordCount[word]) {
+                wordCount[word]++;
+              } else {
+                wordCount[word] = 1;
+              }
+              if (wordCount[word] > max) {
+                max = wordCount[word];
+                maxWord = word;
+              }
+            });
+            return maxWord;
+          }
+          const findMostWord1 = (article)=>{
+            // 合法性判断
+            if (!article) return;
+            // 参数处理
+            article = article.trim().toLowerCase();
+            let wordList = article.match(/[a-z]+/g),
+              visited = [],
+              maxNum = 0,
+              maxWord = "";
+            article = " " + wordList.join("  ") + " ";
+            // 遍历判断单词出现次数
+            wordList.forEach(function (item) {
+              if (visited.indexOf(item) < 0) {
+                // 加入 visited 
+                visited.push(item);
+                let word = new RegExp(" " + item + " ", "g"),
+                  num = article.match(word).length;
+                if (num > maxNum) {
+                  maxNum = num;
+                  maxWord = item;
+                }
+              }
+            });
+            return maxWord + "  " + maxNum;
+          }
+          const maxWord = computed(() => findMostWord(article.value))
+          return {
+            article, maxWord
+          }
+        }
+      }).mount('#app');
+    </script>
+</body>
+
+</html>
