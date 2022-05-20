@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Predict search results</title>
+</head>
+
+<body>
+  <script src="https://unpkg.com/vue@3"></script>
+  <script type="importmap">
+    {
+      "imports": {
+        "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js"
+      }
+    }
+  </script>
+
+  <div id="app">
+    <input v-model="value" @input="handleInput" />
+    <div>
+      全部数据：{{ allDataComputed }}
+    </div>
+    <div>
+      预测结果：{{ results }}
+    </div>
+  </div>
+
+  <script type="module">
+    import { createApp,watch,ref,computed,onMounted } from 'vue'
+    import {Tree} from './tireTree.js'
+    createApp({
+      setup(){
+        // 生成随机数据
+        const genNum = (total)=> {
+          let data = [];
+          while (total--) {
+            const randNum = ~~(Math.random() * 1e9);
+            data.push(randNum.toString());
+          }
+          // 排一下序，方便待会验证程序的正确性
+          return data.sort();
+        }
+
+        const value = ref('');
+        const predictions = ref([]);
+        const allData = ref(genNum(10));
+
+        const results = computed(()=>{
+          return predictions.value.join(',');
+        });
+
+        const allDataComputed = computed(()=>{
+          return allData.value.join(',');
+        });
+
+        const tree = ref();
+
+        const rebuildTree = (newData)=>{
+          tree.value = new Tree();
+          for(let i = 0; i < newData.length; i++){
+            tree.value.insert(newData[i]);
+          }
+          console.log(tree.value)
+        }
+        rebuildTree(allData.value);
+        watch(()=>allData.value,(newVal)=>{
+          rebuildTree(newVal);
+          console.log(tree)
+        },{
+          immediately:true
+        });
+
+        const handleInput = (e)=>{
+          predictions.value = tree.value.predict(value.value);
+        }
+        
+        return{
+          value,
+          predictions,
+          allData,results,allDataComputed,
+          handleInput
+        }
+      }
+    }).mount('#app')
+  </script>
+</body>
+
+</html>
